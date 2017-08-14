@@ -5,6 +5,9 @@ import {readdirSync} from 'fs';
 import express from 'express';
 import bodyParser from 'body-parser';
 
+
+var firebase = require('firebase');
+
 //https://expressjs.com/en/4x/api.html
 const app = express();
 
@@ -57,9 +60,18 @@ app.listen(3001, () => {
 });
 
 
-// app.post('/api/games', function(req, res) {
-// 		const data = req.body.player
-// 		res.send({test: player + "hey hey"})
 
-// 	});
+  // app.post('/api/games'), function(req, res) {
+
+  //   // firebase.database().ref('/games/' + res.id).set({
+  //   //   name: "test"
+  //   // })
+
+  //   // res.send({
+  //   //   test: data
+  //   // })
+
+  //   console.log(req.body)
+
+  // }
 

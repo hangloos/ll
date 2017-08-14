@@ -1,6 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import Board from './board';
+import Reset from './reset';
+import List from './list';
+
+import axios from 'axios'
+import createFragment from 'react-addons-create-fragment';
+
+
 export default class Home extends React.Component {
 
   state = {
@@ -9,35 +17,40 @@ export default class Home extends React.Component {
   constructor(...args) {
     super(...args);
 
+    this.state = {
+      games: []
+    };
   }
 
-  async componentDidMount() {
-    this.setState({
-      data: this.updateData()
-    })
+  componentWillMount() {
+    
+    this.updateData().then((result) => {
+      let games = Object.keys(result.data.games).map(key => {
+        return  result.data.games[key]
+      })
+
+        console.log(games, "componentWillMount")
+        this.setState({games: games})
+      }, this)
+
   }
 
-  async updateData() {
-    const response = await fetch('http://localhost:3001/api/games').then(res => res.json()).then(function(x) {
-      console.log(x)
-      debugger
-    })
-    return response
+  updateData() {
+    return axios.get('http://localhost:3001/api/games')
+      
   }
-
-  getGames() {
-    console.log(this.state.data)
-  }
-
-
-
-
 
   render() {
-    return (
-    <div className="games-list">
-    <button onClick={this.getGames.bind(this)}>Get Games</button>
-    </div>
+    console.log(this.state, "before return")
+    return  (
+    <ul>
+      <h1>Games</h1>
+      {this.state.games.map(game => 
+        <List key={game.id} id={game.id} game={game}/>
+      )} 
+    </ul>
     )
   }
+
+
 }

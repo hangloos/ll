@@ -14,8 +14,8 @@ var firebase = require('firebase');
   firebase.initializeApp(config);
 
 export default function(app) {
+  //start game
 	app.post('/api/game', function(req, res) {
-		//start a game?
 		let game_obj = {
 			id: uuid.v1()
 		}
@@ -29,33 +29,38 @@ export default function(app) {
 		});
 	});
 
+//get a game
 	app.get('/api/game/:game_id', function(req, res) {
-		
-    var dataFirebase = firebase.database().ref('/games/' + game_id)
-
-    dataFirebase.on('value', function(datasnapshot) {
-      console.log(datasnapshot);
+  
+    var firebaseGame = firebase.database().ref('/games/' + req.params.game_id )
+    firebaseGame.once("value", function(snapshot) {
+      res.send(snapshot)
+    }, function(errorObject) {
+      console.log('The read failed: ' + errorObject.code)
     })
-
-    res.send({
-			size: 3,
-			board: 'somedatastructure',
-			etc: true
-		});
+		
 	});
 
-
+//get all games
   app.get('/api/games', function(req, res) {
      var firebaseAll = firebase.database().ref()
-     firebaseAll.on("value", function(snapshot) {
+     firebaseAll.once("value", function(snapshot) {
       res.send(snapshot)
      }, function (errorObject) {
       console.log('The read failed: ' + errorObject.code)
      });
-    // res.send({
-    //   data: firebaseAll
-    // })
+  
   })
+
+  //save game
+
+  app.post('/api/games', function(req, res) {
+    
+    firebase.database().ref('/games/' + req.body.data.id).set(
+      req.body.data)
+    
+
+  });
 
 
 }

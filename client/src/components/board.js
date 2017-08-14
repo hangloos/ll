@@ -6,8 +6,9 @@ import BoardSpace from './board-space';
 import Reset from './reset';
 import SaveButton from './save-button';
 import Announcement from './announcement';
-
 import AlertContainer from 'react-alert'
+
+import axios from 'axios'
 
 
 //firebase
@@ -29,20 +30,7 @@ var firebase = require('firebase');
 export default class Board extends React.Component {
 
 	state = {
-		player: "X",
-		winning_combinations: [
-		["first_row first_col", "first_row", "first_row last_col"],
-		["first_col", "middle", "last_col"],
-		["last_row first_col", "last_row", "last_row last_col"],
-		["first_row first_col", "first_col", "last_row first_col"],
-		["first_row", "middle", "last_row"],
-		["first_row last_col", "last_col", "last_row last_col"],
-		["first_row first_col", "middle", "last_row last_col"], 
-		["first_row last_col", "middle", "last_row first_col"]],
-		winner_boolean: false,
-		fullBoard: false,
-		turn_count: 0,
-		winner: null
+		
   };
                      
 	static propTypes = {
@@ -88,7 +76,7 @@ alertOptions = {
 
 //setting my state with the locations
 	async componentWillReceiveProps() {
-		const {length, id} = this.props;
+		const {length, id, player, winning_combinations, winner_boolean, fullboard, turn_count, winner} = this.props;
 
 		for(let row = 0; row < length; row++) {
 
@@ -99,21 +87,31 @@ alertOptions = {
 				})
 		}
 	}
+	console.log(this.props, "props")
 
+	this.setState({
+			id: id,
+			player: player,
+			winning_combinations: winning_combinations,
+			winner_boolean: winner_boolean,
+			fullboard: fullboard, 
+			turn_count: turn_count, 
+			winner: winner,
+			player: player
+		})
 
 	}
 
+	//  async componentWillMount() {
+ //    this.setState({player: await this.updatePlayer()});
+ //  }
 
-	 async componentWillMount() {
-    this.setState({player: await this.updatePlayer()});
-  }
+ //  // here is my node api structure 
+ //  async updatePlayer() {
+ //    const response = await fetch('http://localhost:3001/api/title').then(res => res.json());
 
-  // here is my node api structure 
-  async updatePlayer() {
-    const response = await fetch('http://localhost:3001/api/title').then(res => res.json());
-
-    return response.player;
-	}
+ //    return response.player;
+	// }
 
 	// generateRandBoardValue() {
 	// 	const rand = Math.random() * 3;
@@ -188,17 +186,10 @@ alertOptions = {
 				for(let col = 0; col < length; col++) {
 					const current_loc = this.getBoardSpaceClass(row, col, length)
 					this.setState({
-						[current_loc]: "",
-						fullboard: false,
-						winner_boolean: false,
-						turn_count: 0,
-						winner: null,
-						player: "X"
+						[current_loc]: ""
 					})
 			}
 		}
-			
-			// window.location.href= `/`;
 
 	}
 
@@ -224,40 +215,20 @@ alertOptions = {
 
 		let id = this.props.id
 		let state = this.state
-		firebase.database().ref('/games/' + id).set({
-			player: state.player,
-			winning_combinations: state.winning_combinations,
-			winner_boolean: state.winner_boolean,
-			fullBoard: state.fullBoard,
-			turn_count: state.turn_count,
-			"middle": state["middle"],
-			"first_col": state["first_col"],
-			"first_row": state["first_row"],
-			"first_row first_col": state["first_row first_col"],
-			"first_row last_col": state["first_row last_col"],
-			"last_col": state["last_col"],
-			"last_row": state["last_row"],
-			"last_row first_col": state["last_row first_col"],
-			"last_row last_col": state["last_row last_col"],
+
+		let game_data = this.state
+		axios.post('http://localhost:3001/api/games', {
+			headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+			data: game_data
 		})
-		// firebase.database().ref('/games/' + game_obj.id).set({
-		// 	id: game_obj.id
-		// });
+		.then(function (response) {
+			console.log(response)
+		})
+		.catch(function (error) {
+			console.log(error)
+		})
 
-		// let game_data = this.state
-		// const response = fetch('http://localhost:3001/api/games', {
-		// 	method: "post",
-		// 	headers: {
-		// 		'Accept': 'application/json',
-  //   		'Content-Type': 'application/json'
-		// 	},
-		// 	body: game_data
-		// 	})
-		// .then(response => response.json())
 	}
-
-
-
 
 	getBoardSpaceClass(row, col, length) {
 		const classes = [];

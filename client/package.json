@@ -3,13 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "firebase": "latest",
     "react": "^15.6.1",
+    "react-addons-create-fragment": "^15.6.0",
+    "react-alert": "latest",
     "react-dom": "^15.6.1",
     "react-router-dom": "^4.1.2",
     "react-scripts": "1.0.10",
-    "uuid": "latest",
-    "react-alert": "latest",
-    "firebase": "latest"
+    "uuid": "latest"
   },
   "scripts": {
     "start": "npm run ensure-installed && react-scripts start",
@@ -17,5 +18,8 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "ensure-installed": "[ -d node_modules ] || npm install"
+  },
+  "devDependencies": {
+    "axios": "^0.16.2"
   }
 }

@@ -1,24 +1,10 @@
 import React from 'react';
 import {BrowserRouter, Route} from 'react-router-dom';
-
+import axios from 'axios'
 import './app.css';
 import Game from './components/game';
 import Home from './components/home';
 
-var uuid = require('uuid');
-
-var firebase = require('firebase');
-
-
-  // var config = {
-  //   apiKey: "AIzaSyD2GQaZJySjzHUceW0m7jFmzNFocQuuXck",
-  //   authDomain: "tic-tac-toe-af5ed.firebaseapp.com",
-  //   databaseURL: "https://tic-tac-toe-af5ed.firebaseio.com",
-  //   projectId: "tic-tac-toe-af5ed",
-  //   storageBucket: "tic-tac-toe-af5ed.appspot.com",
-  //   messagingSenderId: "133604893145"
-  // };
-  // firebase.initializeApp(config);
 
 class App extends React.Component {
   state = {
@@ -48,14 +34,15 @@ class App extends React.Component {
 
     return response.player;
 	}
+
+  loadGame() {
+    debugger
+    axios.get('http://localhost:3001/api/game/' + this.game_id).then(res => console.log(res));
+
+
+  }
 		
 	startGame() {
-		var test;
-		//todo: actually get it to start a game...
-		// const game_id = uuid.v1();
-		// firebase.database().ref('games/' + game_id).set({
-		// 	test: 4
-		// })
 
 		const response = fetch('http://localhost:3001/api/game', {
 			method: 'post',
@@ -67,6 +54,7 @@ class App extends React.Component {
 			.then(res => window.location.href= `/game/${res.id}`);
 
 	}
+
 
 	render() {
 		return (
@@ -98,7 +86,7 @@ class App extends React.Component {
 							const params = props.match.params;
 
 
-							return <Game  reset={this.startGame} {...params}/>
+							return <Game load={this.loadGame} reset={this.startGame} {...params}/>
 						}}
 					/>
 				</div>
